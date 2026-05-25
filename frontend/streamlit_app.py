@@ -358,12 +358,12 @@ with tab2:
 
         stats_response = requests.get(
             f"{API_URL}/statistics",
-            timeout=30
+            timeout=300
         )
 
         top_response = requests.get(
             f"{API_URL}/top-matches",
-            timeout=30
+            timeout=300
         )
 
         stats = stats_response.json()
@@ -409,7 +409,7 @@ with tab2:
 
         scores_response = requests.get(
             f"{API_URL}/all-scores",
-            timeout=30
+            timeout=300
         )
 
         scores_data = scores_response.json()
