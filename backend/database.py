@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 class MongoDBManager:
     """Manages MongoDB Atlas connections and operations."""
     
-    def __init__(self, connection_string: str, database_name: str = "resume_screening", timeout: int = 5):
+    def __init__(self, connection_string: str, database_name: str = "resume_screening", timeout: int = 30):
         """
         Initialize MongoDB connection.
         
