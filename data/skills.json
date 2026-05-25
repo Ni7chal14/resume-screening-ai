@@ -1,0 +1,70 @@
+{
+  "Programming Languages": [
+    "Python",
+    "Java",
+    "JavaScript",
+    "TypeScript",
+    "C",
+    "C++",
+    "C#",
+    "Go",
+    "Rust",
+    "R",
+    "SQL"
+  ],
+
+  "Data Science & ML": [
+    "Machine Learning",
+    "Deep Learning",
+    "TensorFlow",
+    "PyTorch",
+    "Scikit-learn",
+    "Pandas",
+    "NumPy",
+    "Matplotlib",
+    "Seaborn",
+    "XGBoost",
+    "LightGBM",
+    "NLP",
+    "Computer Vision",
+    "Data Analysis",
+    "Feature Engineering",
+    "Model Deployment"
+  ],
+
+  "Web Frameworks": [
+    "FastAPI",
+    "Flask",
+    "Django",
+    "React",
+    "Next.js",
+    "Node.js",
+    "Express.js",
+    "Streamlit"
+  ],
+
+  "Databases": [
+    "MongoDB",
+    "PostgreSQL",
+    "MySQL",
+    "SQLite",
+    "Redis"
+  ],
+
+  "Cloud & DevOps": [
+    "Docker",
+    "Kubernetes",
+    "AWS",
+    "Azure",
+    "GCP",
+    "Git",
+    "GitHub",
+    "CI/CD"
+  ],
+
+  "Visualization": [
+    "Power BI",
+    "Tableau",
+    "Plotly"
+  ]
+}

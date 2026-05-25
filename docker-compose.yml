@@ -1,0 +1,31 @@
+﻿version: '3.8'
+
+services:
+  api:
+    build: .
+    container_name: resume-screening-api
+    ports:
+      - "8000:8000"
+    environment:
+      - MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/resume_screening?retryWrites=true&w=majority
+      - CORS_ORIGINS=http://localhost:8501,http://localhost:8000
+      - LOG_LEVEL=INFO
+      - PORT=8000
+    volumes:
+      - .:/app
+    command: uvicorn backend.main:app --host 0.0.0.0 --port 8000 --reload
+
+  streamlit:
+    build:
+      context: .
+      dockerfile: Dockerfile.streamlit
+    container_name: resume-screening-ui
+    ports:
+      - "8501:8501"
+    environment:
+      - API_URL=http://api:8000
+      - STREAMLIT_SERVER_HEADLESS=true
+    volumes:
+      - ./frontend:/app/frontend
+    depends_on:
+      - api
