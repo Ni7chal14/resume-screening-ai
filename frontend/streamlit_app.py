@@ -4,7 +4,7 @@ import plotly.graph_objects as go
 import plotly.express as px
 import pandas as pd
 
-API_URL = "http://localhost:8000"
+API_URL = "https://resume-screening-ai-5w3k.onrender.com"
 
 st.set_page_config(
     page_title="Resume Screening AI",
