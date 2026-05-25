@@ -45,11 +45,12 @@ async def lifespan(app: FastAPI):
     try:
         # Startup
         logger.info("Starting Resume Screening AI backend...")
+        logger.info("DEPLOY TEST - TFIDF VERSION")
         
         # Initialize models
         logger.info("Loading Sentence Transformer model...")
         similarity_model = SimilarityModel()        
-        
+
         logger.info("Loading skill extractor...")
         skills_file = os.path.join(os.path.dirname(__file__), '../data/skills.json')
         skill_extractor = SkillExtractor(skills_file=skills_file)
