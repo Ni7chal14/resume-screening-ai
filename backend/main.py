@@ -48,7 +48,7 @@ async def lifespan(app: FastAPI):
         
         # Initialize models
         logger.info("Loading Sentence Transformer model...")
-        similarity_model = SimilarityModel(model_name="all-MiniLM-L6-v2")
+        similarity_model = SimilarityModel()        
         
         logger.info("Loading skill extractor...")
         skills_file = os.path.join(os.path.dirname(__file__), '../data/skills.json')

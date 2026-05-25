@@ -20,9 +20,6 @@ motor==3.3.2  # Async MongoDB driver
 # ============================================
 # NLP & Machine Learning
 # ============================================
-sentence-transformers==2.2.2
-torch==2.1.1
-transformers==4.34.1
 scikit-learn==1.3.2
 numpy==1.26.2
 pandas==2.1.3

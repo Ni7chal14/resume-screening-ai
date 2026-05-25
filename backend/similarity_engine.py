@@ -5,9 +5,6 @@ Similarity computation engine for resume and job description matching.
 import logging
 from typing import List, Dict, Tuple
 from dataclasses import dataclass
-from sentence_transformers import util
-import numpy as np
-
 logger = logging.getLogger(__name__)
 
 
@@ -65,7 +62,7 @@ class SimilarityEngine:
             overall_similarity = self.similarity_model.compute_similarity(
                 resume_text, job_description
             )
-            
+
             overall_similarity = max(
                 0.0,
                 min(
@@ -117,36 +114,22 @@ class SimilarityEngine:
             matching_skills = []
             missing_skills = []
 
-            if not resume_skills or not job_skills:
-                return [], []
+            for job_skill in job_skills:
 
-            # Encode ALL skills once
-            resume_embeddings = self.similarity_model.encode(
-                resume_skills
-            )
+                best_score = 0
+                best_match = None
 
-            job_embeddings = self.similarity_model.encode(
-                job_skills
-            )
+                for resume_skill in resume_skills:
 
-            similarity_matrix = (
-                util.pytorch_cos_sim(
-                    job_embeddings,
-                    resume_embeddings
-                )
-            )
+                    score = self.similarity_model.compute_similarity(
+                        job_skill,
+                        resume_skill
+                    )
 
-            for i, job_skill in enumerate(job_skills):
+                    if score > best_score:
 
-                scores = similarity_matrix[i]
-
-                best_idx = scores.argmax().item()
-
-                best_score = scores[best_idx].item()
-
-                best_score = max(0.0, min(1.0, float(best_score)))
-
-                best_match = resume_skills[best_idx]
+                        best_score = score
+                        best_match = resume_skill
 
                 if best_score >= threshold:
 
@@ -160,6 +143,7 @@ class SimilarityEngine:
 
                     missing_skills.append({
                         "skill": job_skill,
+                        "matched_skill": None,
                         "similarity_score": float(best_score)
                     })
 
