@@ -5,6 +5,7 @@ Similarity computation engine for resume and job description matching.
 import logging
 from typing import List, Dict, Tuple
 from dataclasses import dataclass
+from sentence_transformers import util
 import numpy as np
 
 logger = logging.getLogger(__name__)
@@ -21,7 +22,7 @@ class MatchResult:
 
 
 class SimilarityEngine:
-    """Computes similarity between resumes and job descriptions."""
+    """ Computes similarity between resumes and job descriptions."""
     
     def __init__(self, similarity_model, skill_extractor):
         """
@@ -98,76 +99,78 @@ class SimilarityEngine:
     
     def _match_skills(
         self,
-        resume_skills: List[str],
-        job_skills: List[str],
-        threshold: float
-    ) -> Tuple[List[Dict], List[Dict]]:
-        """ 
-        Match resume skills with job requirements.
-        
-        Args:
-            resume_skills: Skills found in resume.
-            job_skills: Skills required by job.
-            threshold: Similarity threshold for matching.
-            
-        Returns:
-            Tuple of (matching_skills, missing_skills).
-        """
+        resume_skills,
+        job_skills,
+        threshold
+    ):
+
         try:
+
             matching_skills = []
             missing_skills = []
-            matched_job_skills = set()
-            
-            # Check each job requirement skill
-            for job_skill in job_skills:
-                best_match = None
-                best_score = 0
-                
-                # Find best matching resume skill
-                for resume_skill in resume_skills:
-                    similarity = self.similarity_model.compute_similarity(
-                        job_skill, resume_skill
-                    )
-                    
-                    if similarity > best_score:
-                        best_score = similarity
-                        best_match = resume_skill
-                
-                # Create match record
+
+            if not resume_skills or not job_skills:
+                return [], []
+
+            # Encode ALL skills once
+            resume_embeddings = self.similarity_model.encode(
+                resume_skills
+            )
+
+            job_embeddings = self.similarity_model.encode(
+                job_skills
+            )
+
+            similarity_matrix = (
+                util.pytorch_cos_sim(
+                    job_embeddings,
+                    resume_embeddings
+                )
+            )
+
+            for i, job_skill in enumerate(job_skills):
+
+                scores = similarity_matrix[i]
+
+                best_idx = scores.argmax().item()
+
+                best_score = scores[best_idx].item()
+
+                best_match = resume_skills[best_idx]
+
                 if best_score >= threshold:
 
                     matching_skills.append({
-                        'skill': job_skill,
-                        'matched_skill': best_match,
-                        'similarity_score': max(
-                            0.0,
-                            min(1.0, float(best_score))
-                        )
+                        "skill": job_skill,
+                        "matched_skill": best_match,
+                        "similarity_score": float(best_score)
                     })
-
-                    matched_job_skills.add(job_skill)
-                    logger.debug(f"Matched: {job_skill} -> {best_match} ({best_score:.4f})")
 
                 else:
 
                     missing_skills.append({
-                        'skill': job_skill,
-                        'similarity_score': max(
-                            0.0,
-                            min(1.0, float(best_score))
-                        )   
+                        "skill": job_skill,
+                        "similarity_score": float(best_score)
                     })
-                    logger.debug(f"Missing: {job_skill} (best match: {best_score:.4f})")
-            
-            # Sort by similarity score
-            matching_skills.sort(key=lambda x: x['similarity_score'], reverse=True)
-            missing_skills.sort(key=lambda x: x['similarity_score'], reverse=True)
-            
-            logger.info(f"Skill matching: {len(matching_skills)} matched, {len(missing_skills)} missing")
-            
+
+            matching_skills.sort(
+                key=lambda x: x["similarity_score"],
+                reverse=True
+            )
+
+            missing_skills.sort(
+                key=lambda x: x["similarity_score"],
+                reverse=True
+            )
+
             return matching_skills, missing_skills
+
         except Exception as e:
-            logger.error(f"Error matching skills: {str(e)}")
+
+            logger.error(
+                f"Error matching skills: {str(e)}"
+            )
+
             return [], []
     
     def _calculate_match_score(
