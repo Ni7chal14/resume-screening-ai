@@ -65,6 +65,14 @@ class SimilarityEngine:
             overall_similarity = self.similarity_model.compute_similarity(
                 resume_text, job_description
             )
+            
+            overall_similarity = max(
+                0.0,
+                min(
+                    1.0,
+                    float(overall_similarity)
+                )
+            )
             logger.info(f"Overall similarity: {overall_similarity:.4f}")
             
             # Match skills with similarity scores
@@ -135,6 +143,8 @@ class SimilarityEngine:
                 best_idx = scores.argmax().item()
 
                 best_score = scores[best_idx].item()
+
+                best_score = max(0.0, min(1.0, float(best_score)))
 
                 best_match = resume_skills[best_idx]
 
